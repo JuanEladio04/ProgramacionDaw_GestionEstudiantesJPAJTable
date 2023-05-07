@@ -2,13 +2,11 @@ package jepm.proyect.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
 import jepm.proyect.model.Estudiante;
 
 public class EstudianteController {
@@ -97,6 +95,21 @@ public class EstudianteController {
 		}
 		
 		return datos;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static void realizeUpdate (Estudiante e) {
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("GestionEstudiantesJPAJTable");
+
+		EntityManager em = entityManagerFactory.createEntityManager();		
+		
+		em.getTransaction().begin();
+		em.merge(e);
+		em.getTransaction().commit();
+		em.close();
 	}
 
 }

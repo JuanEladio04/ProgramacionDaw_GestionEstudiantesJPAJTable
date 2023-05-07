@@ -7,7 +7,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import jepm.proyect.controller.EstudianteController;
+import jepm.proyect.controller.TipologiaSexoController;
 import jepm.proyect.model.Estudiante;
+import jepm.proyect.model.Tipologiasexo;
 
 import java.awt.GridBagLayout;
 import javax.swing.JSplitPane;
@@ -19,9 +21,13 @@ import javax.swing.JLabel;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainWindow extends JFrame {
 
@@ -34,6 +40,8 @@ public class MainWindow extends JFrame {
 	private JTextField jtf_address;
 	private JTextField jtf_email;
 	private JTextField jtf_phoneNumber;
+	private JComboBox jcb_gender; 
+	private JButton btn_update;
 
 	/**
 	 * Launch the application.
@@ -252,20 +260,36 @@ public class MainWindow extends JFrame {
 		gbc_jtf_phoneNumber.gridy = 7;
 		jp_UpdatePanel.add(jtf_phoneNumber, gbc_jtf_phoneNumber);
 		
-		JLabel lblNewLabel_8 = new JLabel("Sexo:");
+		JLabel lblNewLabel_8 = new JLabel("Género:");
 		GridBagConstraints gbc_lblNewLabel_8 = new GridBagConstraints();
 		gbc_lblNewLabel_8.anchor = GridBagConstraints.EAST;
-		gbc_lblNewLabel_8.insets = new Insets(0, 0, 0, 5);
+		gbc_lblNewLabel_8.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel_8.gridx = 0;
 		gbc_lblNewLabel_8.gridy = 8;
 		jp_UpdatePanel.add(lblNewLabel_8, gbc_lblNewLabel_8);
 		
-		JComboBox jcb_gender = new JComboBox();
+		jcb_gender = new JComboBox();
 		GridBagConstraints gbc_jcb_gender = new GridBagConstraints();
+		gbc_jcb_gender.insets = new Insets(0, 0, 5, 0);
 		gbc_jcb_gender.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jcb_gender.gridx = 1;
 		gbc_jcb_gender.gridy = 8;
 		jp_UpdatePanel.add(jcb_gender, gbc_jcb_gender);
+		
+		btn_update = new JButton("Guardar");
+		btn_update.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				realizeUpdate();
+				studentTable.repaint();
+			}
+		});
+		GridBagConstraints gbc_btn_update = new GridBagConstraints();
+		gbc_btn_update.gridwidth = 2;
+		gbc_btn_update.insets = new Insets(0, 0, 0, 5);
+		gbc_btn_update.gridx = 0;
+		gbc_btn_update.gridy = 9;
+		jp_UpdatePanel.add(btn_update, gbc_btn_update);
+		addValuesToGenderCombo();
 	}
 	
 	
@@ -283,7 +307,35 @@ public class MainWindow extends JFrame {
 		jtf_address.setText(e.getDireccion());
 		jtf_email.setText(e.getEmail());
 		jtf_phoneNumber.setText(e.getTelefono()+"");
+		jcb_gender.setSelectedItem(e.getTipologiasexo().getDescripcion());
 		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	private void addValuesToGenderCombo() {
+		List<Tipologiasexo> tp = TipologiaSexoController.findAll();
+		
+		for (Tipologiasexo tipologiasexo : tp) {
+			jcb_gender.addItem(tipologiasexo);
+		}
+				
+	}
+	
+	
+	private void realizeUpdate() {
+		Estudiante e = new Estudiante();
+			e.setId(Integer.parseInt(jtf_id.getText()));
+			e.setNombre(jtf_name.getText());
+			e.setApellido1(jtf_lastname1.getText());
+			e.setApellido2(jtf_lastname2.getText());
+			e.setDni(jtf_DNI.getText());
+			e.setDireccion(jtf_address.getText());
+			e.setEmail(jtf_phoneNumber.getText());
+			e.setTipologiasexo((Tipologiasexo) jcb_gender.getSelectedItem());
+			EstudianteController.realizeUpdate(e);
 	}
 	
 	
